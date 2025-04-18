@@ -6,14 +6,14 @@ NOTE: These steps were tested on a clean Ubuntu 22.04.05 (LTS) installation.
 
 ## 0. Setup GIT Identity
 
-First thing to do is to set up correctly the git identity.
+First thing to do is to set up correctly the git identity. This is only needed to push code to the repository, not to reproduce the project. 
+
+**IMPORTANT**: Use your **own name** and **PoliTo email** address to ensure clarity.
 
 ```bash
 git config user.name "Your Name"
 git config user.email "Your Email"
 ```
-
-**IMPORTANT**: Use your **own name** and **PoliTo email** address to ensure clarity. 
 
 ## 1. Install the required packages
 
