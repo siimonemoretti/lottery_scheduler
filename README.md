@@ -9,9 +9,11 @@ NOTE: These steps were tested on a clean Ubuntu 22.04.05 (LTS) installation.
 First thing to do is to set up correctly the git identity.
 
 ```bash
-git config --global user.name "Your Name"
-git config --global user.email "Your Email"
+git config user.name "Your Name"
+git config user.email "Your Email"
 ```
+
+**IMPORTANT**: Use your **own name** and **PoliTo email** address to ensure clarity. 
 
 ## 1. Install the required packages
 
