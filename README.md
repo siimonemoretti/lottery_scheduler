@@ -124,6 +124,7 @@ Inside the init place the following:
 #!/bin/sh
 mount -t proc none /proc
 mount -t sysfs none /sys
+echo -e "\\n Hello from group9!\\n"
 /bin/sh
 ```
 
@@ -143,4 +144,12 @@ Create the *initramfs* that gets passed to the Linux kernel.
 
 ```bash
 find . -print0 | cpio --nul -ov --format=newc | gzip -9 > rootfs.cpio.gz
+```
+
+### 6. Launch it
+
+Use the following command to 
+
+```bash
+qemu-system-arm -M versatilepb -kernel ~/linux-5.15.180/arch/arm/boot/zImage -dtb ~/linux-5.15.180/arch/arm/boot/dts/versatile-pb.dtb -initrd ~/rootfs/rootfs.cpio.gz -serial stdio -append "root=/dev/mem console=ttyAMA0" -display none
 ```
