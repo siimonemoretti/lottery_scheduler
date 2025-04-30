@@ -9,3 +9,4 @@
 !linux-5.15.180/include/
 !linux-5.15.180/include/uapi/
 !linux-5.15.180/include/uapi/linux
+!linux-5.15.180/include/uapi/linux/sched.h
