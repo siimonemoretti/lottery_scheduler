@@ -4,9 +4,16 @@
 !linux-5.15.180/
 !linux-5.15.180/kernel/
 !linux-5.15.180/kernel/sched/
+# lottery.c is where we define the lottery scheduling class
 !linux-5.15.180/kernel/sched/lottery.c
 
 !linux-5.15.180/include/
 !linux-5.15.180/include/uapi/
 !linux-5.15.180/include/uapi/linux
+# uapi/linux/sched.h contains the definition of the scheduling policies
 !linux-5.15.180/include/uapi/linux/sched.h
+
+!linux-5.15.180/include/
+!linux-5.15.180/include/linux/
+# sched.h contains the definition of struct task_struct
+!linux-5.15.180/include/linux/sched.h
