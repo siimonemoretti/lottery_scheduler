@@ -5,3 +5,7 @@
 !linux-5.15.180/kernel/
 !linux-5.15.180/kernel/sched/
 !linux-5.15.180/kernel/sched/lottery.c
+
+!linux-5.15.180/include/
+!linux-5.15.180/include/uapi/
+!linux-5.15.180/include/uapi/linux
