@@ -8,6 +8,9 @@
 !linux-5.15.180/kernel/sched/lottery.c
 # sched.h contains definition of rq (run queue) and struct sched_class
 !linux-5.15.180/kernel/sched/sched.h
+# core.c contains the sched_init() function, which initializes the scheduler
+# here we'll call the init function of our lottery scheduling class
+!linux-5.15.180/kernel/sched/core.c
 
 !linux-5.15.180/include/
 !linux-5.15.180/include/uapi/
