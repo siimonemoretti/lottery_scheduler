@@ -526,7 +526,7 @@ struct cfs_bandwidth { };
 #endif	/* CONFIG_CGROUP_SCHED */
 
 /* Lottery-related fields in a runqueue */
-struct lottery_rq {
+struct ltr_rq {
 	unsigned int      nr_running;
 	struct list_head queue; /* list of lottery tasks */
 }
@@ -964,7 +964,7 @@ struct rq {
 	struct cfs_rq		cfs;
 	struct rt_rq		rt;
 	struct dl_rq		dl;
-	struct lottery_rq	ltr;
+	struct ltr_rq	   ltr;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	/* list of leaf cfs_rq on this CPU: */
