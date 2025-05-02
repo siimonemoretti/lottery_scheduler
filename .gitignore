@@ -3,7 +3,7 @@
 !.gitignore
 !linux-5.15.180/
 !linux-5.15.180/kernel/
-!linux-5.15.180/kernel/sched/
+!linux-5.15.180/kernel/sched/*
 # lottery.c is where we define the lottery scheduling class
 !linux-5.15.180/kernel/sched/lottery.c
 # sched.h contains definition of rq (run queue) and struct sched_class
