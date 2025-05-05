@@ -714,10 +714,12 @@ struct kmap_ctrl {
 #endif
 };
 
-struct task_struct {
-	/* Number of lottery tickets process is holding */
-	unsigned int 		tickets;
+struct sched_ltr_entity {
+	struct list_head		list;
+	unsigned int 		   tickets; /* Number of lottery tickets that this task has */
+};
 
+struct task_struct {
 #ifdef CONFIG_THREAD_INFO_IN_TASK
 	/*
 	 * For reasons of header soup (see current_thread_info()), this
@@ -776,6 +778,7 @@ struct task_struct {
 	struct sched_entity		se;
 	struct sched_rt_entity		rt;
 	struct sched_dl_entity		dl;
+	struct sched_ltr_entity		ltr;
 
 #ifdef CONFIG_SCHED_CORE
 	struct rb_node			core_node;
