@@ -4413,6 +4413,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 		p->sched_reset_on_fork = 0;
 	}
 
+	
 	if (dl_prio(p->prio))
 		return -EAGAIN;
 	else if (rt_prio(p->prio))
@@ -6794,8 +6795,15 @@ int default_wake_function(wait_queue_entry_t *curr, unsigned mode, int wake_flag
 }
 EXPORT_SYMBOL(default_wake_function);
 
+// Tweak: this function is used to set the scheduler class and priority
+// We want to also consider the lottery class, so we add a check for it.
 static void __setscheduler_prio(struct task_struct *p, int prio)
 {
+	if (p->policy == SCHED_LOTTERY) {
+		p->sched_class = &lottery_sched_class;
+		p->lottery_prio = prio;
+		return;
+	}
 	if (dl_prio(prio))
 		p->sched_class = &dl_sched_class;
 	else if (rt_prio(prio))
