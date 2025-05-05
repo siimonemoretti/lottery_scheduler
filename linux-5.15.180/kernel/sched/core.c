@@ -4413,14 +4413,17 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 		p->sched_reset_on_fork = 0;
 	}
 
-	
-	if (dl_prio(p->prio))
-		return -EAGAIN;
-	else if (rt_prio(p->prio))
-		p->sched_class = &rt_sched_class;
-	else
-		p->sched_class = &fair_sched_class;
-
+	// Tweak: consider the SCHED_LOTTERY too
+	if (p->policy == SCHED_LOTTERY) {
+		p->sched_class = &lottery_sched_class;
+	} else {
+		if (dl_prio(p->prio))
+			return -EAGAIN;
+		else if (rt_prio(p->prio))
+			p->sched_class = &rt_sched_class;
+		else
+			p->sched_class = &fair_sched_class;
+	}
 	init_entity_runnable_average(&p->se);
 
 
