@@ -22,3 +22,6 @@
 !linux-5.15.180/include/linux/
 # sched.h contains the definition of struct task_struct 
 !linux-5.15.180/include/linux/sched.h
+
+# Tweak to fork.c to give a default amount of lottery tickets to a process
+!linux-5.15.180/kernel/fork.c
