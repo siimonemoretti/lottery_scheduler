@@ -3,7 +3,7 @@
 !.gitignore
 !linux-5.15.180/
 !linux-5.15.180/kernel/
-!linux-5.15.180/kernel/sched/*
+!linux-5.15.180/kernel/sched/
 # lottery.c is where we define the lottery scheduling class
 !linux-5.15.180/kernel/sched/lottery.c
 # sched.h contains definition of rq (run queue) and struct sched_class
@@ -11,6 +11,8 @@
 # core.c contains the sched_init() function, which initializes the scheduler
 # here we'll call the init function of our lottery scheduling class
 !linux-5.15.180/kernel/sched/core.c
+# Makefile ensures we compile lottery.c
+!linux-5.15.180/kernel/sched/Makefile
 
 !linux-5.15.180/include/
 !linux-5.15.180/include/uapi/
