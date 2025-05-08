@@ -31,7 +31,7 @@ enqueue_task_lottery(struct rq *rq, struct task_struct *p, int flags)
    list_add_tail(&ltr_se->run_list, &ltr_rq->queue);
 
 	// Increment the number of running tasks
-	rq->ltr->nr_running++;
+	rq->ltr.nr_running++;
    ltr_rq->total_tickets += ltr_se->tickets;
 }
 
@@ -47,7 +47,7 @@ dequeue_task_lottery(struct rq *rq, struct task_struct *p,int flags)
    struct ltr_rq *ltr_rq = rq->ltr;
 
    list_del(&ltr_se->run_list);
-	rq->ltr->nr_running--;
+	rq->ltr.nr_running--;
    ltr_rq->total_tickets -= ltr_se->tickets;
 }
 
