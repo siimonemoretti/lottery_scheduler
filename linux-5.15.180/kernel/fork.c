@@ -2603,7 +2603,7 @@ pid_t kernel_clone(struct kernel_clone_args *args)
 	p = copy_process(NULL, trace, NUMA_NO_NODE, args);
 
 	/* Tweak: give the process some lottery tickets */
-	p->ltr->tickets = 5;
+	p->ltr.tickets = 5;
 	// TODO: how do we assign the list_head list member of struct ltr?
 
 
