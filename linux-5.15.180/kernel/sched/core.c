@@ -6804,7 +6804,7 @@ static void __setscheduler_prio(struct task_struct *p, int prio)
 {
 	if (p->policy == SCHED_LOTTERY) {
 		p->sched_class = &lottery_sched_class;
-		p->lottery_prio = prio;
+		p->prio = prio;
 		return;
 	}
 	if (dl_prio(prio))
