@@ -90,7 +90,7 @@ static void task_tick_lottery(struct rq *rq, struct task_struct *p, int queued)
 {
 }
 
-DEFINE_SCHED_CLASS(lottery){
+DEFINE_SCHED_CLASS(lottery) = {
 	.enqueue_task = enqueue_task_lottery,
 	.dequeue_task = dequeue_task_lottery,
 	.yield_task = yield_task_lottery,
