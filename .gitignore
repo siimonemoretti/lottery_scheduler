@@ -27,3 +27,6 @@
 
 # Tweak to fork.c to give a default amount of lottery tickets to a process
 !linux-5.15.180/kernel/fork.c
+
+# script.bash is a simple script to run QEMU with the kernel image and the initramfs
+!linux-5.15.180/script.bash
