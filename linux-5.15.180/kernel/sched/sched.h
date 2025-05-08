@@ -530,7 +530,7 @@ struct ltr_rq {
 	unsigned int      nr_running; /* number of running tasks */
 	unsigned int      total_tickets; /* total number of tickets in the queue */
 	struct list_head queue; /* list_head of all tasks in the lottery queue */
-}
+};
 
 /* CFS-related fields in a runqueue */
 struct cfs_rq {
