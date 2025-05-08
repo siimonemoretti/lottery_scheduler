@@ -92,6 +92,26 @@ Finally, compile the kernel:
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-
 ```
 
+#### Extra: build directory for the kernel
+
+When compiling the kernel, all output files will per default be stored together with the kernel source code.
+Using the option *make O=output/dir* allows you to specify an alternate place for the output files (including .config).
+An example:
+
+- kernel source code: /usr/src/linux-5.15.180/
+- build directory:    /home/name/build/kernel
+
+To configure and build the kernel, use:
+
+```bash
+# Cd inside the kernel source code:
+cd linux-5.15.180/
+make O=/home/name/build/kernel ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- versatile_defconfig
+sudo make O=/home/name/build/kernel ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-
+```
+
+Please note: If the *O=output/dir* option is used, then it must be used for all invocations of make.
+
 ### 4. Configure and build BusyBox
 
 ```bash
