@@ -1,99 +1,83 @@
 #!/bin/bash
 
 # Script Name: script.bash
-# Description: Launch qemu-system-arm with ...
-# Author: [Simone Moretti]
+# Description: Launch qemu-system-arm with cached or selected paths
+# Author: Simone Moretti
 
-# First off: try to locate the zImage, the versatile-pb.dtb and the rootfs.cpio.gz using the find command
+CONFIG_FILE="$HOME/.qemu_config.sh"
+REFRESH=false
+SEARCH_DIR="$HOME"  # Change this to a more likely directory
 
-# Find the zImage starting from root
-mapfile -t zimages < <(find / -type f -name "zImage" 2>/dev/null)
-
-# Check how many files were found
-count=${#zimages[@]}
-
-if [ $count -eq 0 ]; then
-	echo "No zImage file found. Please build the kernel first."
-	exit 1
-elif [ $count -eq 1 ]; then
-	zImage="${zimages[0]}"
-	echo "Found one zImage file: $zImage"
-else
-	echo "Multiple zImage files found:"
-	for i in "${!zimages[@]}"; do
-		 echo "[$i] ${zimages[$i]}"
-	done
-	read -p "Enter the number of the zImage file to use: " index
-	if ! [[ "$index" =~ ^[0-9]+$ ]] || [ "$index" -ge "$count" ]; then
-	   echo "Invalid selection."
-		exit 1
-	fi
-	zImage="${zimages[$index]}"
-	echo "You zImage: $zImage"
+# Check for refresh flag
+if [[ "$1" == "--refresh" ]]; then
+	REFRESH=true
 fi
 
-# Find the versatile-pb.dtb starting from root
-mapfile -t dtbs < <(find / -type f -name "versatile-pb.dtb" 2>/dev/null)
-
-# Check how many files were found
-count=${#dtbs[@]}
-
-if [ $count -eq 0 ]; then
-   echo "No versatile-pb.dtb file found. Please build the kernel first."
-   exit 1
-elif [ $count -eq 1 ]; then
-   dtbs="${dtbs[0]}"
-   echo "Found one versatile-pb.dtb file: $dtbs"
+# Load config if available and not refreshing
+if [[ -f "$CONFIG_FILE" && "$REFRESH" == false ]]; then
+	source "$CONFIG_FILE"
+	echo "Using cached config:"
+	echo "zImage: $zImage"
+	echo "dtbs: $dtbs"
+	echo "rootfs: $rootfs"
 else
-   echo "Multiple versatile-pb.dtb files found:"
-   for i in "${!dtbs[@]}"; do
-       echo "[$i] ${dtbs[$i]}"
-   done
-   read -p "Enter the number of the versatile-pb.dtb file to use: " index
-   if ! [[ "$index" =~ ^[0-9]+$ ]] || [ "$index" -ge "$count" ]; then
-      echo "Invalid selection."
-      exit 1
-   fi
-   dtbs="${dtbs[$index]}"
-   echo "You dtbs: $dtbs"
+	echo "Searching for required files..."
+
+	find_and_select() {
+		local name="$1"
+		local varname="$2"
+
+		echo "Searching for $name..."
+		mapfile -t matches < <(find "$SEARCH_DIR" -type f -name "$name" 2>/dev/null)
+
+		local count=${#matches[@]}
+		if [ $count -eq 0 ]; then
+			echo "No $name found in $SEARCH_DIR. Trying root filesystem..."
+			mapfile -t matches < <(find / -type f -name "$name" 2>/dev/null)
+			count=${#matches[@]}
+		fi
+
+		if [ $count -eq 0 ]; then
+			echo "No $name found. Please build or provide it."
+			exit 1
+		elif [ $count -eq 1 ]; then
+			eval "$varname=\"${matches[0]}\""
+			echo "Found $name: ${matches[0]}"
+		else
+			echo "Multiple $name files found:"
+			for i in "${!matches[@]}"; do
+				echo "[$i] ${matches[$i]}"
+			done
+			read -p "Enter the number of the $name to use: " index
+			if ! [[ "$index" =~ ^[0-9]+$ ]] || [ "$index" -ge "$count" ]; then
+				echo "Invalid selection."
+				exit 1
+			fi
+			eval "$varname=\"${matches[$index]}\""
+		fi
+	}
+
+	find_and_select "zImage" zImage
+	find_and_select "versatile-pb.dtb" dtbs
+	find_and_select "rootfs.cpio.gz" rootfs
+
+	# Save config
+	cat > "$CONFIG_FILE" <<EOF
+zImage="$zImage"
+dtbs="$dtbs"
+rootfs="$rootfs"
+EOF
+
+	echo "Saved configuration to $CONFIG_FILE"
 fi
 
-# Find the rootfs.cpio.gz starting from root
-mapfile -t rootfs < <(find / -type f -name "rootfs.cpio.gz" 2>/dev/null)
-
-# Check how many files were found
-count=${#rootfs[@]}
-
-if [ $count -eq 0 ]; then
-   echo "No rootfs.cpio.gz file found. Please build the rootfs first."
-   exit 1
-elif [ $count -eq 1 ]; then
-   rootfs="${rootfs[0]}"
-   echo "Found one rootfs.cpio.gz file: $rootfs"
-else
-   echo "Multiple rootfs.cpio.gz files found:"
-   for i in "${!rootfs[@]}"; do
-       echo "[$i] ${rootfs[$i]}"
-   done
-   read -p "Enter the number of the rootfs.cpio.gz file to use: " index
-   if ! [[ "$index" =~ ^[0-9]+$ ]] || [ "$index" -ge "$count" ]; then
-      echo "Invalid selection."
-      exit 1
-   fi
-   rootfs="${rootfs[$index]}"
-   echo "You rootfs: $rootfs"
-fi
-
-# FINALLY ! We have all the paths we need
-# Now we can run qemu-system-arm with the selected files
-
-# Wait for the user to press Enter
+# Confirm before running QEMU
 read -p "Press Enter to start QEMU with the selected files..."
 
 qemu-system-arm -M versatilepb \
-	-kernel $zImage \
-	-dtb $dtbs \
-	-initrd $rootfs \
+	-kernel "$zImage" \
+	-dtb "$dtbs" \
+	-initrd "$rootfs" \
 	-serial stdio \
 	-append "root=/dev/mem console=ttyAMA0" \
 	-display none
