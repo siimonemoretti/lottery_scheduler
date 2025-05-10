@@ -4412,7 +4412,8 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 		 */
 		p->sched_reset_on_fork = 0;
 	}
-
+	// Test: force SCHED_LOTTERY
+	// p->policy = SCHED_LOTTERY;
 	// Tweak: consider the SCHED_LOTTERY too
 	if (p->policy == SCHED_LOTTERY) {
 		p->sched_class = &lottery_sched_class;
@@ -7352,9 +7353,9 @@ recheck:
 	if (attr->sched_priority > MAX_RT_PRIO-1)
 		return -EINVAL;
 	if ((dl_policy(policy) && !__checkparam_dl(attr)) ||
-	    (rt_policy(policy) != (attr->sched_priority != 0)))
+		(rt_policy(policy) != (attr->sched_priority != 0)) ||
+		(!ltr_policy(policy)))
 		return -EINVAL;
-
 	/*
 	 * Allow unprivileged RT tasks to decrease priority:
 	 */
@@ -7405,7 +7406,6 @@ recheck:
 		if (p->sched_reset_on_fork && !reset_on_fork)
 			return -EPERM;
 	}
-
 	if (user) {
 		if (attr->sched_flags & SCHED_FLAG_SUGOV)
 			return -EINVAL;
@@ -7414,7 +7414,6 @@ recheck:
 		if (retval)
 			return retval;
 	}
-
 	/* Update task specific "requested" clamps */
 	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
 		retval = uclamp_validate(p, attr);
@@ -7448,7 +7447,6 @@ recheck:
 		retval = -EINVAL;
 		goto unlock;
 	}
-
 	/*
 	 * If not changing anything there's no need to proceed further,
 	 * but store a possible modification of reset_on_fork.
@@ -7695,7 +7693,7 @@ EXPORT_SYMBOL_GPL(sched_set_fifo_low);
 void sched_set_normal(struct task_struct *p, int nice)
 {
 	struct sched_attr attr = {
-		.sched_policy = SCHED_NORMAL,
+		.sched_policy = SCHED_LOTTERY,
 		.sched_nice = nice,
 	};
 	WARN_ON_ONCE(sched_setattr_nocheck(p, &attr) != 0);
@@ -8515,6 +8513,7 @@ SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
 	case SCHED_RR:
 		ret = MAX_RT_PRIO-1;
 		break;
+	case SCHED_LOTTERY:
 	case SCHED_DEADLINE:
 	case SCHED_NORMAL:
 	case SCHED_BATCH:
@@ -8542,6 +8541,7 @@ SYSCALL_DEFINE1(sched_get_priority_min, int, policy)
 	case SCHED_RR:
 		ret = 1;
 		break;
+	case SCHED_LOTTERY:
 	case SCHED_DEADLINE:
 	case SCHED_NORMAL:
 	case SCHED_BATCH:
