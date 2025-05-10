@@ -30,3 +30,6 @@
 
 # script.bash is a simple script to run QEMU with the kernel image and the initramfs
 !qemu_launch.sh
+
+# Script to compile the kernel inside another folder
+!linux-5.15.180/compile.sh
