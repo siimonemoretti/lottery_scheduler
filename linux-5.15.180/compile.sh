@@ -13,7 +13,7 @@ make O=~/linux_build/ ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- versatile_defcon
 
 # Step 3: Build the kernel with the specified configuration
 echo "Building kernel..."
-if ! sudo make O=~/linux_build/ ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-; then
+if ! sudo make -j$(nproc) O=~/linux_build/ ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-; then
     echo "Kernel build failed. Exiting."
     exit 1
 fi
