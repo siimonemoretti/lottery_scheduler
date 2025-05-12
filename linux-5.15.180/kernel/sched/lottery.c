@@ -16,7 +16,7 @@ void init_ltr_rq(struct ltr_rq *ltr_rq)
 	// Set the total number of tickets to 0
 	ltr_rq->total_tickets = 0;
 	// Print a message indicating that the lottery runqueue has been initialized
-	printk(KERN_INFO "Lottery runqueue initialized\n");
+	printk(KERN_EMERG ">> Lottery runqueue initialized\n");
 }
 
 /*
@@ -27,14 +27,14 @@ static void
 enqueue_task_lottery(struct rq *rq, struct task_struct *p, int flags)
 {
 	// Print with highest priority
-	printk(KERN_EMERG ">>Trying to enqueue task %s\n", p->comm);
+	printk(KERN_EMERG ">> Trying to enqueue task %s\n", p->comm);
 	// Enqueue the task into the lottery scheduling circular doubly linked list
 	list_add_tail(&p->ltr.list, &rq->ltr.queue);
 
 	// Increment the number of running tasks and total tickets in the runqueue
 	rq->ltr.nr_running++;
    rq->ltr.total_tickets += p->ltr.tickets;
-	printk(KERN_INFO "New task %s is added to the lottery queue (had %d default tickets)\n", p->comm, p->ltr.tickets);
+	printk(KERN_EMERG ">> New task %s is added to the lottery queue (had %d default tickets)\n", p->comm, p->ltr.tickets);
 }
 
 /*
@@ -45,13 +45,13 @@ static void
 dequeue_task_lottery(struct rq *rq, struct task_struct *p,int flags)
 {
 	// Print with highest priority
-	printk(KERN_EMERG ">>Trying to dequeue task %s\n", p->comm);
+	printk(KERN_EMERG ">> Trying to dequeue task %s\n", p->comm);
 	// Dequeue the task from the lottery scheduling queue
    list_del(&p->ltr.list);
 	// Decrement the number of running tasks and total tickets in the runqueue
 	rq->ltr.nr_running--;
 	rq->ltr.total_tickets -= p->ltr.tickets;
-	printk(KERN_INFO "Task %s is removed from the lottery queue\n", p->comm);
+	printk(KERN_EMERG ">> Task %s is removed from the lottery queue\n", p->comm);
 }
 
 /*
@@ -59,7 +59,7 @@ dequeue_task_lottery(struct rq *rq, struct task_struct *p,int flags)
  */
 static void yield_task_lottery(struct rq *rq)
 {
-	printk(KERN_EMERG ">>Yielding task %s\n", current->comm);
+	printk(KERN_EMERG ">> Yielding task %s\n", current->comm);
 	// TODO : Handle this
 	// For now: do nothing
 }
@@ -70,7 +70,7 @@ static void yield_task_lottery(struct rq *rq)
 static void check_preempt_curr_lottery(struct rq *rq, struct task_struct *p,
 				       int flags)
 {
-	printk(KERN_EMERG ">>Checking if task %s should preempt the current task\n", p->comm);
+	printk(KERN_EMERG ">> Checking if task %s should preempt the current task\n", p->comm);
 }
 
 /*
@@ -114,14 +114,18 @@ static struct task_struct *pick_next_task_lottery(struct rq *rq)
 	}
 	// task shouldn't be NULL here, but just in case
 	if (task == NULL) {
-		printk(KERN_ERR "No task found in the lottery queue\n");
+		printk(KERN_ERR ">> No task found in the lottery queue\n");
 		return NULL;
 	}
 
+	printk(KERN_EMERG ">> Task %s has been selected by the lottery (lucky ticket: %d)\n", task->comm, lucky_one);
 	// return the task that has been selected by the lottery
 	return task;
 }
 
+/*
+ * put_prev_task is called whenever a task is to be taken out of the CPU. 
+ */
 static void put_prev_task_lottery(struct rq *rq, struct task_struct *p)
 {
 	printk(KERN_EMERG ">> put_prev_task_lottery() called for task %s\n", p->comm);
@@ -149,12 +153,18 @@ static void task_tick_lottery(struct rq *rq, struct task_struct *p, int queued)
 	 
 	// If even, preempt the current task
 	if (should_preempt && 1) // Preempt
-		resched_curr(rq);
+	{
+		printk(KERN_EMERG ">> [RANDOMLY] Preempting task %s\n", p->comm);
+		// resched_curr(rq);
+	} else {
+		printk(KERN_EMERG ">> [RANDOMLY] Not preempting task %s\n", p->comm);
+	}
 }
 
 static void switched_to_lottery(struct rq *rq, struct task_struct *p)
 {
 	// Nothing to do yet
+	// This is called in sched_setscheduler() for example
 	printk(KERN_EMERG ">> switched_to_lottery() called for task %s\n", p->comm);
 }
 
