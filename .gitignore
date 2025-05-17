@@ -33,3 +33,8 @@
 
 # Script to compile the kernel inside another folder
 !linux-5.15.180/compile.sh
+
+# Benchmark files
+!benchmark
+!benchmark/monitor.sh
+!benchmark/dummy_program.c
