@@ -10,35 +10,49 @@ if [ $? -eq 0 ]; then
     echo "Compilation complete."
 fi
 
-echo "Launching the program..."
-./dummy &
-echo "Program launched."
-PID=$!
-echo "Its PID is $PID"
-OUTFILE="sched_stats_$PID.log"
+MAX=4
+while true; do
+  echo "Insert how many processes you want to create:"
+  read N_INPUT
 
-if [ ! -d "/proc/$PID" ]; then
-  echo "Process $PID does not exist."
-  exit 1
-fi
-
-echo "Timestamp,Exec Runtime (ns),Wait Sum (ns),Vol Ctx Switches,Nonvol Ctx Switches" > "$OUTFILE"
-echo "Sarting the monitoring..."
-
-while [ -d "/proc/$PID" ]; do
-  TS=$(date +%s.%N)
-  # Capture key lines from sched file
-  SCHED_LINE=$(grep "^se.exec_start\|^se.sum_exec_runtime\|^se.wait_sum\|^nr_switches" /proc/$PID/sched)
-  VOL_CTX=$(grep "^voluntary_ctxt_switches" /proc/$PID/status | awk '{print $2}')
-  INVOL_CTX=$(grep "^nonvoluntary_ctxt_switches" /proc/$PID/status | awk '{print $2}')
-
-  EXEC_RUNTIME=$(echo "$SCHED_LINE" | grep "sum_exec_runtime" | awk '{print $3}')
-  WAIT_SUM=$(echo "$SCHED_LINE" | grep "se.wait_sum" | awk '{print $3}')
-  NR_SWITCHES=$(echo "$SCHED_LINE" | grep "nr_switches" | awk '{print $3}')
-
-  echo "$TS,$EXEC_RUNTIME,$WAIT_SUM,$VOL_CTX,$INVOL_CTX" >> "$OUTFILE"
-
-  sleep $INTERVAL
+  # Use expr to test if input is a valid integer
+  if expr "$N_INPUT" + 0 >/dev/null 2>&1; then
+      if [ "$N_INPUT" -le "$MAX" ]; then
+          break
+      else
+          echo "The inserted number is too large (the maximum accepted value is $MAX)"
+      fi
+  else
+      echo "Invalid input. Please enter a number."
+  fi
 done
 
+echo "Launching the program $N_INPUT times..."
+
+echo "Starting the monitoring..."
+while :; do
+  PIDS_LEFT=0
+  for PID in $PIDS; do
+    while [ -d "/proc/$PID" ]; do
+      TS=$(date +%s.%N)
+      # Capture key lines from sched file
+      SCHED_LINE=$(grep "^se.exec_start\|^se.sum_exec_runtime\|^se.wait_sum\|^nr_switches" /proc/$PID/sched)
+      VOL_CTX=$(grep "^voluntary_ctxt_switches" /proc/$PID/status | awk '{print $2}')
+      INVOL_CTX=$(grep "^nonvoluntary_ctxt_switches" /proc/$PID/status | awk '{print $2}')
+
+      EXEC_RUNTIME=$(echo "$SCHED_LINE" | grep "sum_exec_runtime" | awk '{print $3}')
+      WAIT_SUM=$(echo "$SCHED_LINE" | grep "se.wait_sum" | awk '{print $3}')
+      NR_SWITCHES=$(echo "$SCHED_LINE" | grep "nr_switches" | awk '{print $3}')
+
+      echo "$TS,$EXEC_RUNTIME,$WAIT_SUM,$VOL_CTX,$INVOL_CTX" >> "$OUTFILE"
+
+      sleep $INTERVAL
+    done
+    if [ "$PIDS_LEFT" -eq 0 ]; then
+      break
+    fi
+
+  sleep $INTERVAL
+  done
+done
 echo "Monitoring stopped. Data saved to $OUTFILE"
