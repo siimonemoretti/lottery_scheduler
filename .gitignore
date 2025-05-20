@@ -38,6 +38,7 @@
 !benchmark
 !benchmark/monitor.sh
 !benchmark/dummy_program.c
+!benchmark/dummy_launcher.c
 
 # Linker file that defines the memory layout of the kernel
 # this is used to add the scheduling class to the kernel
