@@ -38,3 +38,7 @@
 !benchmark
 !benchmark/monitor.sh
 !benchmark/dummy_program.c
+
+# Linker file that defines the memory layout of the kernel
+# this is used to add the scheduling class to the kernel
+!linux-5.15.180/include/asm-generic/vmlinux.lds.h
