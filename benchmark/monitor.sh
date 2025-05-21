@@ -44,11 +44,12 @@ while :; do
       WAIT_SUM=$(echo "$SCHED_LINE" | grep "se.wait_sum" | awk '{print $3}')
       NR_SWITCHES=$(echo "$SCHED_LINE" | grep "nr_switches" | awk '{print $3}')
       {
-        echo "$TS" 
-        echo "$EXEC_RUNTIME"
-        echo "$WAIT_SUM"
-        echo "$VOL_CTX"
-        echo "$INVOL_CTX"
+        echo "Starting time: $TS" 
+        echo "Execution runtime: $EXEC_RUNTIME"
+        echo "Waiting time: $WAIT_SUM"
+        echo "Voluntary context switching: $VOL_CTX"
+        echo "Non voluntary context switching: $INVOL_CTX"
+        exho "" # Empty line
       } >> "$OUTFILE"
       sleep $INTERVAL
     done
