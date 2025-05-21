@@ -35,6 +35,7 @@ while :; do
   for PID in $PIDS; do
     while [ -d "/proc/$PID" ]; do
       TS=$(date +%s.%N)
+      OUTFILE="sched_stats_$PID.csv"
       # Capture key lines from sched file
       SCHED_LINE=$(grep "^se.exec_start\|^se.sum_exec_runtime\|^se.wait_sum\|^nr_switches" /proc/$PID/sched)
       VOL_CTX=$(grep "^voluntary_ctxt_switches" /proc/$PID/status | awk '{print $2}')
