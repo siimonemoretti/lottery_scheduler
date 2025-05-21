@@ -43,9 +43,13 @@ while :; do
       EXEC_RUNTIME=$(echo "$SCHED_LINE" | grep "sum_exec_runtime" | awk '{print $3}')
       WAIT_SUM=$(echo "$SCHED_LINE" | grep "se.wait_sum" | awk '{print $3}')
       NR_SWITCHES=$(echo "$SCHED_LINE" | grep "nr_switches" | awk '{print $3}')
-
-      echo "$TS,$EXEC_RUNTIME,$WAIT_SUM,$VOL_CTX,$INVOL_CTX" >> "$OUTFILE"
-
+      {
+        echo "$TS" 
+        echo "$EXEC_RUNTIME"
+        echo "$WAIT_SUM"
+        echo "$VOL_CTX"
+        echo "$INVOL_CTX"
+      } >> "$OUTFILE"
       sleep $INTERVAL
     done
     if [ "$PIDS_LEFT" -eq 0 ]; then
