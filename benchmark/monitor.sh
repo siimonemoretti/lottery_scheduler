@@ -29,6 +29,18 @@ done
 
 echo "Launching the program $N_INPUT times..."
 
+COUNT=1
+while [ "$COUNT" -le "$N_INPUT" ]; do
+    ./dummy &
+    PID=$!
+    PIDS="$PIDS $PID"
+    echo "Program $COUNT launched (PID $PID)."
+    COUNT=`expr "$COUNT" + 1`
+done
+
+echo "Monitoring the programs with PIDs $PIDS"
+
+
 echo "Starting the monitoring..."
 while :; do
   PIDS_LEFT=0
