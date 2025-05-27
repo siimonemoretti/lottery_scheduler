@@ -26,6 +26,17 @@ void init_ltr_rq(struct ltr_rq *ltr_rq)
 static void 
 enqueue_task_lottery(struct rq *rq, struct task_struct *p, int flags)
 {
+	if (p->__state != TASK_RUNNING) {
+		// Check if the task is waking up
+		if (p->__state == TASK_WAKING) {
+			printk(KERN_ERR ">> enqueue_task_lottery() Task %s [%d] is WAKING up now\n", p->comm, p->pid);
+			dump_stack();
+		} else {
+			printk(KERN_ERR ">> enqueue_task_lottery() Task %s [%d] is NOT in state 0, it's in state %ld\n", p->comm, p->pid, (long)p->__state);
+			dump_stack();
+		}
+	}
+
 	// Enqueue the task into the lottery scheduling circular doubly linked list
 	list_add_tail(&p->ltr.list, &rq->ltr.queue);
 
@@ -33,12 +44,8 @@ enqueue_task_lottery(struct rq *rq, struct task_struct *p, int flags)
 	rq->ltr.nr_running++;
    rq->ltr.total_tickets += p->ltr.tickets;
 	// Check the task's state
-	if (p->__state != TASK_RUNNING) {
-		printk(KERN_ERR, ">> enqueue_task_lottery() TRYING TO ENQUEUE A TASK (%d) THAT IS NOT RUNNING\n", p->pid);
-		return;
-	}
 	// Print the number of tickets the task has (+ PID) and the CPU it is on
-	printk(KERN_EMERG ">> enqueue_task_lottery() Task %s [%d] has %d tickets and is on CPU %d\n", p->comm, p->pid, p->ltr.tickets, task_cpu(p));
+	printk(KERN_EMERG ">> enqueue_task_lottery() Task %s [%d] enqueued with %d tickets\n", p->comm, p->pid, p->ltr.tickets);
 }
 
 /*
@@ -84,7 +91,6 @@ static void check_preempt_curr_lottery(struct rq *rq, struct task_struct *p,
  */
 static struct task_struct *pick_next_task_lottery(struct rq *rq)
 {
-	printk(KERN_EMERG ">> pick_next_task() Picking the next task to run\n");
 	struct task_struct *task = NULL;
 	struct list_head *pos;
 	unsigned int total_tickets = rq->ltr.total_tickets;
@@ -92,6 +98,13 @@ static struct task_struct *pick_next_task_lottery(struct rq *rq)
 	unsigned int tickets_cnt = 0;
 
 	if (total_tickets == 0) {
+		printk(KERN_ERR ">> pick_next_task() No tasks in the lottery queue\n");
+		return NULL;
+	}
+
+	// Check if there are any tasks in the queue
+	if (list_empty(&rq->ltr.queue)) {
+		printk(KERN_ERR ">> pick_next_task() No tasks in the lottery queue\n");
 		return NULL;
 	}
 
@@ -119,11 +132,11 @@ static struct task_struct *pick_next_task_lottery(struct rq *rq)
 	}
 	// task shouldn't be NULL here, but just in case
 	if (task == NULL) {
-		printk(KERN_ERR ">> No task found in the lottery queue\n");
+		printk(KERN_ERR ">> pick_next_task() No task found in the lottery queue\n");
 		return NULL;
 	}
 
-	printk(KERN_EMERG ">> Task %s has been selected by the lottery (lucky ticket: %d)\n", task->comm, lucky_one);
+	printk(KERN_EMERG ">> Task %s [PID %d] has been selected by the lottery (lucky ticket: %d)\n", task->comm, task->pid, lucky_one);
 	// return the task that has been selected by the lottery
 	return task;
 }
@@ -151,7 +164,7 @@ static void set_next_task_lottery(struct rq *rq, struct task_struct *p,
  */
 static void task_tick_lottery(struct rq *rq, struct task_struct *p, int queued)
 {
-	printk(KERN_EMERG ">> task_tick_lottery() called for task %s\n", p->comm);
+	// printk(KERN_EMERG ">> task_tick_lottery() called for task %s\n", p->comm);
 	unsigned int should_preempt = 0;
 
 	if (rq->ltr.nr_running <= 1) {
@@ -161,12 +174,17 @@ static void task_tick_lottery(struct rq *rq, struct task_struct *p, int queued)
 	get_random_bytes((void *)&should_preempt, sizeof(should_preempt));
 	 
 	// If even, preempt the current task
-	if (should_preempt && 1) // Preempt
+	
+	// Preempting on 1 / 10 cases
+	if ((should_preempt % 10) == 0) 
 	{
 		printk(KERN_EMERG ">> [RANDOMLY] Preempting task %s\n", p->comm);
+		// resched the current task
+		resched_curr(rq);
 	} else {
 		printk(KERN_EMERG ">> [RANDOMLY] Not preempting task %s\n", p->comm);
 	}
+	return;
 }
 
 static void switched_to_lottery(struct rq *rq, struct task_struct *p)
