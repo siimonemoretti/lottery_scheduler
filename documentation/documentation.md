@@ -1,5 +1,20 @@
 # Group 9 - Enhancing and Experimenting with the Linux Scheduler
 
+- [Group 9 - Enhancing and Experimenting with the Linux Scheduler](#group-9---enhancing-and-experimenting-with-the-linux-scheduler)
+	- [Modifications to the Linux Scheduler](#modifications-to-the-linux-scheduler)
+		- [1. Implementing a New Scheduling Algorithm](#1-implementing-a-new-scheduling-algorithm)
+			- [1. Define a new scheduling class](#1-define-a-new-scheduling-class)
+			- [2. Tweak the linker file](#2-tweak-the-linker-file)
+			- [3. Create the scheduling policy](#3-create-the-scheduling-policy)
+			- [4. Initialize the data structures](#4-initialize-the-data-structures)
+			- [5. Modify the task\_struct](#5-modify-the-task_struct)
+			- [6. Implement the scheduling functions](#6-implement-the-scheduling-functions)
+			- [7. Modify the Makefile](#7-modify-the-makefile)
+		- [2. \[CHALLENGE\] Per-Core adaptive scheduling policy](#2-challenge-per-core-adaptive-scheduling-policy)
+	- [Benchmarking the Scheduler](#benchmarking-the-scheduler)
+	- [Performance Metrics](#performance-metrics)
+
+
 ## Modifications to the Linux Scheduler
 
 ### 1. Implementing a New Scheduling Algorithm
