@@ -87,12 +87,14 @@ while :; do
         ELAPSED_TIME=`echo "scale=2; $UPTIME - $START_SEC" | bc`
         WAIT_TIME=`echo "scale=2; $ELAPSED_TIME - $CPU_TIME" | bc`
         
+        POLICY=grep policy /proc/$PID/sched | head -1 | awk '{print $3}'
         VOL_CS=`grep voluntary_ctxt_switches /proc/$PID/status | head -1 | awk '{print $3}'`
         INVOL_CS=`grep nonvoluntary_ctxt_switches /proc/$PID/status | head -1 | awk '{print $2}'`
         TIMESTAMP=`date +%s.%N 2>/dev/null || date +%s`
 
         {
         echo "timestamp: $TIMESTAMP"
+        echo "policy: $POLICY"
         echo "user_time: $USER_SEC [s]"
         echo "system_time: $SYS_SEC [s]"
         echo "cpu_time: $CPU_TIME [s]"
