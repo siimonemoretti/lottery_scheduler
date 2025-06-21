@@ -104,6 +104,9 @@ while :; do
         echo "nonvoluntary_cs: $INVOL_CS"
         echo "---------------------------"   # Blank line to separate entries
         } >> "sched_monitor_$PID.csv"
+        # files with the stat to plot
+        echo -n "$ELAPSED_TIME, " >> time_$PID.txt
+        echo -n "$WAIT_TIME, " >> wait_$PID.txt
         
     done
 
