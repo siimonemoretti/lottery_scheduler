@@ -178,11 +178,9 @@ static void task_tick_lottery(struct rq *rq, struct task_struct *p, int queued)
 	// Preempting on 1 / 10 cases
 	if ((should_preempt % 10) == 0) 
 	{
-		printk(KERN_EMERG ">> [RANDOMLY] Preempting task %s\n", p->comm);
 		// resched the current task
 		resched_curr(rq);
 	} else {
-		printk(KERN_EMERG ">> [RANDOMLY] Not preempting task %s\n", p->comm);
 	}
 	return;
 }

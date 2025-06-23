@@ -16,11 +16,19 @@
 #endif
  
 
-void start_dummy_with_lottery() {
+void start_dummy_with_lottery(char *arg) {
    pid_t pid = fork();
    if (pid == 0) {
+		// Write to file the PID of the child process to a new line
+		FILE *file = fopen(arg, "a");
+		if (file == NULL) {
+			perror("Failed to open file");
+			exit(EXIT_FAILURE);
+		} else {
+			fprintf(file, "%d\n", getpid());
+			fclose(file);
+		}
 	   // In child: run dummy_program
-      printf("%d 's policy: %d\n", getpid(), sched_getscheduler(0));
 	   execl("./dummy_program", "dummy_program", NULL);
 	   perror("execl failed");
 	   exit(EXIT_FAILURE);
@@ -29,7 +37,7 @@ void start_dummy_with_lottery() {
    }
 }
 
-int main(void){
+int main(int argc, char *argv[]) {
 	struct sched_param param;
 	int policy;
 	
@@ -58,11 +66,13 @@ int main(void){
 	printf("New scheduling policy: %d\n", policy);
 
    // Fork two child processes
-   start_dummy_with_lottery();
-   start_dummy_with_lottery();
+   start_dummy_with_lottery(argv[1]);
+   start_dummy_with_lottery(argv[1]);
+	start_dummy_with_lottery(argv[1]);
 	// Wait for child processes to finish
    wait(NULL);
    wait(NULL);
+	wait(NULL);
    
    return 0;
 }

@@ -28,14 +28,28 @@ done
 
 echo "Launching the program $N_INPUT times..."
 
-COUNT=1
-while [ "$COUNT" -le "$N_INPUT" ]; do
-    ./dummy &
-    PID=$!
-    PIDS="$PIDS $PID"
-    echo "Program $COUNT launched (PID $PID)."
-    COUNT=`expr "$COUNT" + 1`
-done
+# COUNT=1
+# while [ "$COUNT" -le "$N_INPUT" ]; do
+#     ./dummy &
+#     PID=$!
+#     PIDS="$PIDS $PID"
+#     echo "Program $COUNT launched (PID $PID)."
+#     COUNT=`expr "$COUNT" + 1`
+# done
+
+PID_FILE="/tmp/child_pids.txt"
+rm -f "$PID_FILE"
+
+# Launch your dummy_launcher (C program) and wait for it to spawn children
+./dummy_launcher "$PID_FILE" &
+
+# Optional: wait a moment to let the C program populate the file
+sleep 1
+
+# Read child PIDs into array
+mapfile -t PIDS < "$PID_FILE"
+
+echo "Child PIDs: ${PIDS[@]}"
 
 echo "Monitoring the programs with PIDs $PIDS"
 

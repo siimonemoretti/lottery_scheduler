@@ -17,6 +17,8 @@
 
 ## Modifications to the Linux Scheduler
 
+This is an overview of the work done by Group 9 in order to modify the Linux scheduler. 
+
 ### 1. Implementing a New Scheduling Algorithm
 
 We decided to implement a new scheduling algorithm based on the lottery scheduling policy. Its behaviour is simple: when a process is created, it is assigned a number of tickets, which are used to determine the process's chance of being scheduled. The scheduler randomly picks a ticket from the available tickets and runs the process that holds that ticket. Of course, the more tickets a process has, the higher its chance of being scheduled.
