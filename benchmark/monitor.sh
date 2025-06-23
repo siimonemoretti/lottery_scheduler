@@ -116,5 +116,11 @@ while :; do
     # sleep $INTERVAL
 done
 
+for PID in $PIDS; do
+    echo "Monitoring finished. Formatting the output files for pid $PID..."
+    sed -i 's/,[[:space:]]*$//' "time_$PID.txt"
+    sed -i 's/,[[:space:]]*$//' "wait_$PID.txt"
+done
+
 rm -rf ./starttimes
 echo "Monitoring complete."
