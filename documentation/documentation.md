@@ -118,7 +118,12 @@ Finally, we had to modify the Makefile in the 'linux/kernel/sched' directory to 
 obj-y += lottery.o
 ```
 
-### 2. [CHALLENGE] Per-Core adaptive scheduling policy
+### 2. Scripting
+
+When dealing with such big projects, it is important to have a good scripting system to automate the process of building and testing the kernel. We created two scripts to help us with this task:
+
+1. 'compile.sh': to compile the kernel and the header files.  Obtaining the headers was essential for the next step: compiling the user-space programs used to test our new scheduling class, as in the minimal filesystem provided by busybox there is no compiler available.
+2. 'qemu_launch.sh': This shell script initializes a QEMU ARM virtual machine by locating required files (zImage, versatile-pb.dtb, and rootfs.cpio.gz) either from a previously saved configuration or through a filesystem search. If the --refresh flag is provided, it forces a re-search of the files. When multiple matching files are found, the user is prompted to select one. Once identified, the file paths are cached in ~/.qemu_config.sh for future runs. After confirming, the script launches QEMU using the selected files with predefined parameters.
 
 ## Benchmarking the Scheduler
 
