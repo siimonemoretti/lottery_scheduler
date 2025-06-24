@@ -41,6 +41,8 @@
 !benchmark/dummy_launcher.c
 !benchmark/compile.sh
 !benchmark/first.log
+!benchmark/second.log
+!benchmark/third.log
 
 # Linker file that defines the memory layout of the kernel
 # this is used to add the scheduling class to the kernel
