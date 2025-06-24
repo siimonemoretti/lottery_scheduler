@@ -86,9 +86,7 @@ dequeue_task_lottery(struct rq *rq, struct task_struct *p,int flags)
  */
 static void yield_task_lottery(struct rq *rq)
 {
-	//printk(KERN_EMERG ">> Yielding task %s\n", current->comm);
-	// TODO : Handle this
-	// How do we implement the yield? 
+	// We don't implement yielding in this scheduling class
 }
 
 /*
