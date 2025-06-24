@@ -3,7 +3,7 @@
  */
 #include "sched.h"
 #include "pelt.h"
-#include <linux ///printk.h>
+#include <linux///printk.h>
 #include <linux/random.h>
 
 /*
@@ -13,10 +13,9 @@
   * - "s" for select
   * - "f" for finish
   */
-#define log_event(pid, op)                                                     \
-	do {                                                                   \
-		printk(KERN_DEFAULT ">>%d,%llu,%s\n", pid, ktime_get_ns(),     \
-		       op);                                                    \
+#define log_event(pid, op, tickets)                                               \
+	do {                                                                           \
+		printk(KERN_DEFAULT ">>%d,%llu,%s,%d\n", pid, ktime_get_ns(), op, tickets); \
 	} while (0)
 
 void init_ltr_rq(struct ltr_rq *ltr_rq)
@@ -61,7 +60,7 @@ static void enqueue_task_lottery(struct rq *rq, struct task_struct *p,
 	//printk(KERN_EMERG ">> enqueue_task_lottery() Task %s [%d] enqueued with %d tickets\n", p->comm, p->pid, p->ltr.tickets);
 
 	// LOG that the task has been enqueued
-	log_event(p->pid, "e");
+	log_event(p->pid, "e", p->ltr.tickets);
 }
 
 /*
@@ -79,7 +78,7 @@ static void dequeue_task_lottery(struct rq *rq, struct task_struct *p,
 	//printk(KERN_EMERG ">> dequeue_task_lottery() Task %s [%d] has been removed from the queue\n", p->comm, p->pid);
 
 	// LOG that the task has been dequeued
-	log_event(p->pid, "d");
+	log_event(p->pid, "d", p->ltr.tickets);
 }
 
 /*
@@ -157,7 +156,7 @@ static struct task_struct *pick_next_task_lottery(struct rq *rq)
 	}
 
 	// Logging selected task
-	log_event(task->pid, "s");
+	log_event(task->pid, "s", task->ltr.tickets);
 
 	//printk(KERN_EMERG ">> Task %s [PID %d] has been selected by the lottery (lucky ticket: %d)\n", task->comm, task->pid, lucky_one);
 	// return the task that has been selected by the lottery

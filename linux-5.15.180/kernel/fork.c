@@ -2602,9 +2602,11 @@ pid_t kernel_clone(struct kernel_clone_args *args)
 
 	p = copy_process(NULL, trace, NUMA_NO_NODE, args);
 
-	/* Tweak: give the process some lottery tickets */
-	p->ltr.tickets = 5;
-	// TODO: how do we assign the list_head list member of struct ltr?
+	/* Tweak: give the process a random number of tickets (max 15)*/
+	unsigned int random_n = 0;
+	get_random_bytes(&random_n, sizeof(random_n));
+	random_n = random_n % 14 + 1; /* 1 to 15 */
+	p->ltr.tickets = random_n;
 
 
 	add_latent_entropy();
