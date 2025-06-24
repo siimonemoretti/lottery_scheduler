@@ -52,3 +52,5 @@
 # Documentation files
 !documentation
 !documentation/documentation.md
+!documentation/results
+!documentation/results/wt*
