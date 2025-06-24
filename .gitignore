@@ -43,6 +43,7 @@
 !benchmark/first.log
 !benchmark/second.log
 !benchmark/third.log
+!benchmark/monitor.py
 
 # Linker file that defines the memory layout of the kernel
 # this is used to add the scheduling class to the kernel
@@ -52,3 +53,5 @@
 # Documentation files
 !documentation
 !documentation/documentation.md
+!documentation/results
+!documentation/results/wt*
