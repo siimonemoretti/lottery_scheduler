@@ -122,6 +122,18 @@ obj-y += lottery.o
 
 ## Benchmarking the Scheduler
 
+The benchmarking phase of the project aimed to monitor and collect the waiting times of selected processes, for which both the start and finish times were known. This phase was structured into four main steps:
 
+1. **Program Generation for Scheduling Analysis**  
+   We developed a simple yet computationally intensive C program, `dummy_program.c`, which calculates the value of $\pi$ using the Leibniz series. This ensured enough CPU load to effectively test the scheduler's behavior.
+
+2. **Concurrent Execution Under Different Scheduling Policies**  
+   To evaluate how the scheduler manages multiple processes, we executed several instances of `dummy_program.c` concurrently using another C program, `dummy_launcher.c`. This launcher modified the scheduling policy before execution, switching from the default to our custom `SCHED_LOTTERY` policy.
+
+3. **Logging Scheduling Decisions**  
+   Each time a process was selected by the scheduler, the kernel logged a message containing the PID, the timestamp of selection, and the number of tickets assigned to that process.
+
+4. **Data Extraction and Visualization**  
+   Those data were extracted and stored in a file. The results were then plotted using the Python script `monitor.py`, allowing us to analyze scheduling patterns and waiting times visually.
 
 ## Performance Metrics
