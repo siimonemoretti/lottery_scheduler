@@ -137,3 +137,35 @@ The benchmarking phase of the project aimed to monitor and collect the waiting t
    Those data were extracted and stored in a file. The results were then plotted using the Python script `monitor.py`, allowing us to analyze scheduling patterns and waiting times visually.
 
 ## Performance Metrics
+
+For the analysis of the results we used the Gantt charts previously obtained during the benchmarking phase. The results were obtained in two separate conditions regarding the tickets assigned for each process inside the file `linux/kernel/fork.c`.
+- With a fixed number of tickets per process (5):
+```c
+p->ltr.tickets = 5;
+```
+- With a variable number of tickets per process, assigned randomically (1 to 15):
+```c
+unsigned int random_n = 0;
+get_random_bytes(&random_n, sizeof(random_n));
+random_n = random_n % 14 + 1; /* 1 to 15 */
+p->ltr.tickets = random_n;
+```
+
+The results of the benchmarking in the case of 4 concurrent processes can be found in figures 1 and 2.
+
+1) In the first case, the waiting times of the processes are totally random and based only on the ticket extracted by the scheduler. So we can expect, at every execution, a different behavior and it's impossible to estimate which process will finish before the others. As it can be seen, there is not a huge difference in the end times of the programs and their executions are almost uniformly distributed.
+
+2) Instead in the second case, where each process is assigned a random amount of tickets, the waiting times reflects this first allocation: as expected initially the CPU is assigned almost only to processes with PIDs 42 and 43, that have way more tickets with respect to the others, that are executed only sporadically until the the end of first two; then they alternate. Here we would have expected the process with PID 44 to finish its execution way before the other one due to the fact that it has twice the tickets, but because of the randomic behavior of the scheduler in this case we can't see a big difference.
+
+
+<div style="text-align: center;">
+<img src="results/gantt_4p_fixed.png" alt="Gantt Chart" width="600"/>
+
+**Figure 1:** Gantt chart of 4 processes with a fixed amount of tickets.
+</div>
+
+<div style="text-align: center;">
+<img src="results/gantt_4p_flex.png" alt="Gantt Chart" width="600"/>
+
+**Figure 2:** Gantt chart of 4 processes with a random amount of tickets.
+</div>
