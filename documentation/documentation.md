@@ -1,21 +1,5 @@
 # Group 9 - Enhancing and Experimenting with the Linux Scheduler
 
-- [Group 9 - Enhancing and Experimenting with the Linux Scheduler](#group-9---enhancing-and-experimenting-with-the-linux-scheduler)
-	- [Modifications to the Linux Scheduler](#modifications-to-the-linux-scheduler)
-		- [1. Implementing a New Scheduling Algorithm](#1-implementing-a-new-scheduling-algorithm)
-			- [1. Define a new scheduling class](#1-define-a-new-scheduling-class)
-			- [2. Tweak the linker file](#2-tweak-the-linker-file)
-			- [3. Create the scheduling policy](#3-create-the-scheduling-policy)
-			- [4. Initialize the data structures](#4-initialize-the-data-structures)
-			- [5. Modify the task\_struct](#5-modify-the-task_struct)
-			- [6. Implement the scheduling functions](#6-implement-the-scheduling-functions)
-			- [7. Modify the Makefile](#7-modify-the-makefile)
-		- [2. Scripting](#2-scripting)
-	- [Benchmarking the Scheduler](#benchmarking-the-scheduler)
-	- [Performance Metrics](#performance-metrics)
-
-
-
 ## Modifications to the Linux Scheduler
 
 This is an overview of the work done by Group 9 in order to modify the Linux scheduler. 
@@ -163,15 +147,6 @@ The results of the benchmarking in the case of 4 concurrent processes can be fou
 
 2) Instead in the second case, where each process is assigned a random amount of tickets, the waiting times reflects this first allocation: as expected initially the CPU is assigned almost only to processes with PIDs 42 and 43, that have way more tickets with respect to the others, that are executed only sporadically until the the end of first two; then they alternate. Here we would have expected the process with PID 44 to finish its execution way before the other one due to the fact that it has twice the tickets, but because of the randomic behavior of the scheduler in this case we can't see a big difference.
 
+![Gantt Chart fixed amount of tickets](results/gantt_4p_fixed.png)
 
-<div style="text-align: center;">
-<img src="results/gantt_4p_fixed.png" alt="Gantt Chart" width="600"/>
-
-**Figure 1:** Gantt chart of 4 processes with a fixed amount of tickets.
-</div>
-
-<div style="text-align: center;">
-<img src="results/gantt_4p_flex.png" alt="Gantt Chart" width="600"/>
-
-**Figure 2:** Gantt chart of 4 processes with a random amount of tickets.
-</div>
+![Gantt Chart random number of tickets](results/gantt_4p_flex.png)
