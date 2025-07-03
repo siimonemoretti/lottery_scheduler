@@ -10,9 +10,10 @@
 			- [5. Modify the task\_struct](#5-modify-the-task_struct)
 			- [6. Implement the scheduling functions](#6-implement-the-scheduling-functions)
 			- [7. Modify the Makefile](#7-modify-the-makefile)
-		- [2. \[CHALLENGE\] Per-Core adaptive scheduling policy](#2-challenge-per-core-adaptive-scheduling-policy)
+		- [2. Scripting](#2-scripting)
 	- [Benchmarking the Scheduler](#benchmarking-the-scheduler)
 	- [Performance Metrics](#performance-metrics)
+
 
 
 ## Modifications to the Linux Scheduler
